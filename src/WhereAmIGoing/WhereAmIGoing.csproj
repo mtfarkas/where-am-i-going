@@ -28,8 +28,8 @@
     <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(PluginDeployDir)" />
   </Target>
 
-  <!-- Builds the Thunderstore upload zip: dotnet build -c Release -t:Build,Package -->
-  <Target Name="Package">
+  <!-- Builds the Thunderstore upload zip: dotnet build src/WhereAmIGoing -c Release -t:Package -->
+  <Target Name="Package" DependsOnTargets="Build">
     <PropertyGroup>
       <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</RepoRoot>
       <ThunderstoreDir>$(RepoRoot)thunderstore\</ThunderstoreDir>
