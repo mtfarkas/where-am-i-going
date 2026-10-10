@@ -1,5 +1,6 @@
 using BepInEx;
 using BepInEx.Logging;
+using HarmonyLib;
 
 namespace WhereAmIGoing
 {
@@ -11,6 +12,7 @@ namespace WhereAmIGoing
         private void Awake()
         {
             Log = Logger;
+            Harmony.CreateAndPatchAll(typeof(SeerPatches), MyPluginInfo.PLUGIN_GUID);
             Log.LogInfo("WhereAmIGoing loaded");
         }
     }
