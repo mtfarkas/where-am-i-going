@@ -27,7 +27,7 @@ namespace WhereAmIGoing
             }
         }
 
-        // The interaction prompt: "Dream of Sky Meadow (2 Lunar)".
+        // The interaction prompt: "Dream: Sky Meadow (2 Lunar)".
         [HarmonyPostfix, HarmonyPatch(nameof(PurchaseInteraction.GetContextString))]
         private static void ContextPostfix(PurchaseInteraction __instance, ref string __result)
         {

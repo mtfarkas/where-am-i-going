@@ -8,7 +8,7 @@ Status: Draft, awaiting review (game code verified against installed RoR2.dll, g
 In the Bazaar Between Time, each Lunar Seer shows only a vague preview and flavor text
 ("You dream of serenity.") for its destination stage. This mod reveals the actual stage name:
 
-- **Interaction prompt:** `Dream of Sky Meadow (2 Lunar)` instead of `Dream (2 Lunar)`.
+- **Interaction prompt:** `Dream: Sky Meadow (2 Lunar)` instead of `Dream (2 Lunar)`.
 - **Ping chat line:** `Player has found: Lunar Seer (Sky Meadow) (2 Lunar).` instead of
   `... Lunar Seer (2 Lunar).` (The floating label above a ping only ever shows the pinging player's
   name, so there's nothing to change there.)
@@ -55,7 +55,7 @@ Three small units:
    - Returns `Language.GetString(sceneDef.nameToken)`.
 2. **`SeerPatches` (HarmonyX postfixes on `PurchaseInteraction`):**
    - `GetDisplayName` postfix: if `TryGetStageName`, `__result = $"{__result} ({name})"`.
-   - `GetContextString` postfix: if `TryGetStageName`, insert `" of {name}"` right after the
+   - `GetContextString` postfix: if `TryGetStageName`, insert `": {name}"` right after the
      localized context token (`Language.GetString(__instance.contextToken)`). If `__result` doesn't
      start with that token (format changed, or another mod rewrote it), fall back to appending
      ` [{name}]`.

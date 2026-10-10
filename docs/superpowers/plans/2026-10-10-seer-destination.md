@@ -15,7 +15,7 @@
 - Client-side only: no networking, no gameplay changes, and no RPCs or SyncVar writes.
 - No runtime dependencies beyond BepInEx 5 (Thunderstore dependency `bbepis-BepInExPack-5.4.2121`).
 - Display name format: `"{vanilla} ({stage})"`, e.g. `Lunar Seer (Sky Meadow)`. This is what the ping chat line uses. `PingIndicator` adds the cost itself, separately, and never calls `GetContextString`.
-- Prompt format: `"{contextLabel} of {stage}{rest}"`, e.g. `Dream of Sky Meadow <nobr>(2 Lunar)</nobr>`. If the result doesn't start with the label, use `"{vanilla} [{stage}]"` instead.
+- Prompt format: `"{contextLabel}: {stage}{rest}"`, e.g. `Dream: Sky Meadow <nobr>(2 Lunar)</nobr>`. If the result doesn't start with the label, use `"{vanilla} [{stage}]"` instead.
 - Any failure (no Seer, index `< 0` or `>= SceneCatalog.sceneDefCount`, null SceneDef, exception) leaves the vanilla text unchanged.
 - Plugin GUID `dev.mtfarkas.whereamigoing`, name `WhereAmIGoing`, version `1.0.0`.
 - Game paths: game `D:\Games\SteamLibrary\steamapps\common\Risk of Rain 2`; r2modman profile `%APPDATA%\r2modmanPlus-local\RiskOfRain2\profiles\Default`.
@@ -26,7 +26,7 @@
 2. **Another mod or a future patch changes the prompt format:** the label prefix doesn't match, so the bracket fallback is used. Unit-tested in Task 2 (`Context_LabelMismatch_AppendsBracket`, `Context_EmptyLabel_AppendsBracket`).
 3. **Client joins or the SyncVar arrives after the Seer spawns:** the stage is resolved each time the text is requested, so the right name appears once synced. Manual check in Task 3 Step 6 (client of a vanilla host).
 4. **Seer prefab has a different `IDisplayNameProvider` ahead of `PurchaseInteraction`:** the ping chat would lack the stage. Manual check in Task 3 Step 6, with a stop-and-report rule.
-5. **Non-English game language:** the stage name is localized, but the inserted `" of "` is English. The spec accepts this. Unit-tested so a label with non-ASCII characters still matches (`Context_NonAsciiLabel_Inserts`).
+5. **Non-English game language:** the stage name and label are localized and the `": "` separator is language-neutral. Unit-tested so a label with non-ASCII characters still matches (`Context_NonAsciiLabel_Inserts`).
 
 ---
 
@@ -117,11 +117,11 @@ public class SeerTextTests
         Assert.Equal("Lunar Seer (Sky Meadow)", SeerText.AppendStage("Lunar Seer", "Sky Meadow"));
 
     [Fact] public void Context_WithCost_InsertsAfterLabel() =>
-        Assert.Equal("Dream of Sky Meadow <nobr>(2 Lunar)</nobr>",
+        Assert.Equal("Dream: Sky Meadow <nobr>(2 Lunar)</nobr>",
             SeerText.InsertStageIntoContext("Dream <nobr>(2 Lunar)</nobr>", "Dream", "Sky Meadow"));
 
     [Fact] public void Context_NoCost_InsertsAfterLabel() =>
-        Assert.Equal("Dream of Sky Meadow", SeerText.InsertStageIntoContext("Dream", "Dream", "Sky Meadow"));
+        Assert.Equal("Dream: Sky Meadow", SeerText.InsertStageIntoContext("Dream", "Dream", "Sky Meadow"));
 
     [Fact] public void Context_LabelMismatch_AppendsBracket() =>
         Assert.Equal("Purchase <nobr>(2 Lunar)</nobr> [Sky Meadow]",
@@ -131,11 +131,11 @@ public class SeerTextTests
         Assert.Equal("Dream [Sky Meadow]", SeerText.InsertStageIntoContext("Dream", "", "Sky Meadow"));
 
     [Fact] public void Context_NonAsciiLabel_Inserts() =>
-        Assert.Equal("Träumen of Himmelswiese <nobr>(2)</nobr>",
+        Assert.Equal("Träumen: Himmelswiese <nobr>(2)</nobr>",
             SeerText.InsertStageIntoContext("Träumen <nobr>(2)</nobr>", "Träumen", "Himmelswiese"));
 
     [Fact] public void Context_StageWithBraces_IsLiteral() =>
-        Assert.Equal("Dream of {0} Plains", SeerText.InsertStageIntoContext("Dream", "Dream", "{0} Plains"));
+        Assert.Equal("Dream: {0} Plains", SeerText.InsertStageIntoContext("Dream", "Dream", "{0} Plains"));
 }
 ```
 
@@ -148,7 +148,7 @@ Expected: the build fails with `CS0103`/`CS0246` ("SeerText" doesn't exist).
 
 - `InsertStageIntoContext`:
   - Uses an ordinal `StartsWith` on a non-empty label.
-  - On a match: `label + " of " + stage + context.Substring(label.Length)`. Otherwise: `context + " [" + stage + "]"`.
+  - On a match: `label + ": " + stage + context.Substring(label.Length)`. Otherwise: `context + " [" + stage + "]"`.
   - Uses string concatenation only, never `string.Format`.
 
 - [ ] **Step 5: Run the tests to verify they pass**
@@ -216,7 +216,7 @@ git commit -m "feat: show seer destination stage in prompt and ping"
 
 Optional shortcut: install `IHarbHD-DebugToolkit` in r2modman and run `next_stage bazaar` in the console.
 1. Solo, in the Bazaar:
-   - Hovering each Seer shows `Dream of <Stage> (… Lunar)`.
+   - Hovering each Seer shows `Dream: <Stage> (… Lunar)`.
    - Pinging each Seer shows `… has found: Lunar Seer (<Stage>) (… Lunar).` in chat.
 2. Buy a Seer, enter the portal, and check that the stage you arrive at matches the name shown.
 3. Check that the other purchasables (Lunar pods, shop terminals, the Newt altar) and a purchased Seer show vanilla text.
@@ -246,7 +246,6 @@ If the prompt works but the ping chat lacks the stage (Review Focus 4), stop and
 - `README.md`:
   - What the mod does, with the two example strings from the Global Constraints.
   - That it's client-side and works with a vanilla host.
-  - That non-English languages show localized stage names joined with the English " of ".
 - `icon.png`: exactly 256×256 PNG. A simple generated image is fine (e.g. via `System.Drawing` in PowerShell).
 
 - [ ] **Step 3: Add the `Package` target**
