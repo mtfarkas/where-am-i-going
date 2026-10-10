@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - Client-side only: no networking, no gameplay changes, and no RPCs or SyncVar writes.
-- No runtime dependencies beyond BepInEx 5 (Thunderstore dependency `bbepis-BepInExPack-5.4.2121`).
+- No runtime dependencies beyond BepInEx 5 (Thunderstore dependency `bbepis-BepInExPack-5.4.2122`).
 - Display name format: `"{vanilla} ({stage})"`, e.g. `Lunar Seer (Sky Meadow)`. This is what the ping chat line uses. `PingIndicator` adds the cost itself, separately, and never calls `GetContextString`.
 - Prompt format: `"{contextLabel}: {stage}{rest}"`, e.g. `Dream: Sky Meadow <nobr>(2 Lunar)</nobr>`. If the result doesn't start with the label, use `"{vanilla} [{stage}]"` instead.
 - Any failure (no Seer, index `< 0` or `>= SceneCatalog.sceneDefCount`, null SceneDef, exception) leaves the vanilla text unchanged.
@@ -239,7 +239,7 @@ If the prompt works but the ping chat lacks the stage (Review Focus 4), stop and
 
 - [ ] **Step 1: Write `manifest.json`**
 
-`name` `WhereAmIGoing`, `version_number` `1.0.0`, `website_url` `""`, `description` `Shows which stage each Lunar Seer leads to, in its prompt and when pinged. Client-side.` (under 250 characters), `dependencies` `["bbepis-BepInExPack-5.4.2121"]`.
+`name` `WhereAmIGoing`, `version_number` `1.0.0`, `website_url` `""`, `description` `Shows which stage each Lunar Seer leads to, in its prompt and when pinged. Client-side.` (under 250 characters), `dependencies` `["bbepis-BepInExPack-5.4.2122"]`.
 
 - [ ] **Step 2: Write the README and icon**
 
