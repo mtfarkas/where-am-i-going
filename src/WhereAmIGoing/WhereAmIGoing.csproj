@@ -28,4 +28,20 @@
     <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(PluginDeployDir)" />
   </Target>
 
+  <!-- Builds the Thunderstore upload zip: dotnet build -c Release -t:Build,Package -->
+  <Target Name="Package">
+    <PropertyGroup>
+      <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</RepoRoot>
+      <ThunderstoreDir>$(RepoRoot)thunderstore\</ThunderstoreDir>
+      <PackageStageDir>$(BaseIntermediateOutputPath)thunderstore\</PackageStageDir>
+      <ManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(ThunderstoreDir)manifest.json')), '"version_number"\s*:\s*"([^"]+)"').Groups[1].Value)</ManifestVersion>
+    </PropertyGroup>
+    <Error Condition="'$(ManifestVersion)' != '$(Version)'" Text="thunderstore/manifest.json version_number '$(ManifestVersion)' does not match project Version '$(Version)'." />
+    <RemoveDir Directories="$(PackageStageDir)" />
+    <Copy SourceFiles="$(ThunderstoreDir)manifest.json;$(ThunderstoreDir)README.md;$(ThunderstoreDir)icon.png;$(TargetPath)" DestinationFolder="$(PackageStageDir)" />
+    <MakeDir Directories="$(RepoRoot)dist" />
+    <ZipDirectory SourceDirectory="$(PackageStageDir)" DestinationFile="$(RepoRoot)dist\WhereAmIGoing-$(Version).zip" Overwrite="true" />
+    <Message Importance="high" Text="Packaged $(RepoRoot)dist\WhereAmIGoing-$(Version).zip" />
+  </Target>
+
 </Project>
