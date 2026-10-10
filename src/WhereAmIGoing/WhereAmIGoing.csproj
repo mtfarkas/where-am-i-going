@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Version>1.0.0</Version>
+    <DebugType>portable</DebugType>
+    <BepInExPluginGuid>dev.mtfarkas.whereamigoing</BepInExPluginGuid>
+    <BepInExPluginName>WhereAmIGoing</BepInExPluginName>
+    <RootNamespace>WhereAmIGoing</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ProfileDir>$(APPDATA)\r2modmanPlus-local\RiskOfRain2\profiles\Default</ProfileDir>
+    <PluginDeployDir Condition="'$(PluginDeployDir)' == ''">$(ProfileDir)\BepInEx\plugins\WhereAmIGoing</PluginDeployDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" PrivateAssets="all" />
+    <PackageReference Include="RiskOfRain2.GameLibs" Version="1.5.0-r.1" PrivateAssets="all" />
+    <PackageReference Include="UnityEngine.Modules" Version="2021.3.45" IncludeAssets="compile" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Copies the plugin into the r2modman profile so "Start modded" picks it up. -->
+  <Target Name="DeployToProfile" AfterTargets="Build" Condition="Exists('$(ProfileDir)\BepInEx\plugins')">
+    <Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="$(PluginDeployDir)" />
+  </Target>
+
+</Project>
