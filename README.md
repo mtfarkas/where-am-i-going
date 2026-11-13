@@ -84,3 +84,7 @@ This builds the mod and writes `dist/WhereAmIGoing-<version>.zip`, containing `m
 - If a client has mods that add stages and the host doesn't, the synced scene index can map to a
   different stage on the client. The vanilla Seer preview image is wrong in the same case.
 - Multiplayer as a client of a vanilla host hasn't been tested in-game yet.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
